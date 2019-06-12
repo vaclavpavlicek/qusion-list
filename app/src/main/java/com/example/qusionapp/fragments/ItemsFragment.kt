@@ -1,6 +1,7 @@
 package com.example.qusionapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,25 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.qusionapp.MainActivity
 
 import com.example.qusionapp.R
-import com.example.qusionapp.TodoClickCallback
-import com.example.qusionapp.data.Todo
-import com.example.qusionapp.models.TodosAdapter
+import com.example.qusionapp.data.Item
+import com.example.qusionapp.data.ItemClickListener
+import com.example.qusionapp.data.ItemsRepository
+import com.example.qusionapp.models.ItemsAdapter
 
 
-class TodosFragment : Fragment() {
+class ItemsFragment : Fragment(), ItemClickListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-
-    private val todoClickCallback = object : TodoClickCallback {
-        override fun onClick(text: String) {
-
-            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                (activity as MainActivity).goToDetail(text)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +32,10 @@ class TodosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_todos, container, false)
-
+        val view = inflater.inflate(R.layout.fragment_items, container, false)
+        val repository = ItemsRepository.getInstance()
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = TodosAdapter(arrayOf(Todo(false, "text"), Todo(true, "text")), todoClickCallback)
+        viewAdapter = ItemsAdapter(repository.fetchItems(), this)
 
         recyclerView = view.findViewById<RecyclerView>(R.id.my_recycler_view).apply {
             setHasFixedSize(true)
@@ -54,5 +47,11 @@ class TodosFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onItemClick(item: Item) {
+        if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            (activity as MainActivity).goToDetail(item)
+        }
     }
 }

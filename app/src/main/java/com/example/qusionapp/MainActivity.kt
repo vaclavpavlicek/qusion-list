@@ -2,8 +2,10 @@ package com.example.qusionapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.qusionapp.fragments.TodoFragment
-import com.example.qusionapp.fragments.TodosFragment
+import com.example.qusionapp.data.Item
+import com.example.qusionapp.data.ItemsRepository
+import com.example.qusionapp.fragments.ItemFragment
+import com.example.qusionapp.fragments.ItemsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,20 +15,22 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, TodosFragment(), "TODOS fragment").commit()
+                .add(R.id.fragment_container, ItemsFragment(), "TODOS fragment").commit()
         }
     }
 
-    fun goToDetail(text: String) {
+    fun goToDetail(item: Item) {
         val bundle = Bundle()
-        bundle.putString("TODO-DETAIL", text)
+        val itemsRepository = ItemsRepository.getInstance()
 
-        val todoFragment = TodoFragment()
+        bundle.putInt("ITEM-INDEx", itemsRepository.indexOf(item))
+
+        val todoFragment = ItemFragment()
         todoFragment.setArguments(bundle)
 
         supportFragmentManager
             .beginTransaction()
-            .addToBackStack("todo")
+            .addToBackStack("item")
             .replace(
                 R.id.fragment_container,
                 todoFragment, null
