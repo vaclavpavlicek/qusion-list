@@ -7,9 +7,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.qusionapp.R
+import com.example.qusionapp.TodoClickCallback
 import com.example.qusionapp.data.Todo
 
-class TodosAdapter(private val todos: Array<Todo>) :
+class TodosAdapter(private val todos: Array<Todo>, private val todoClickCallback: TodoClickCallback) :
     RecyclerView.Adapter<TodosAdapter.ViewHolder>() {
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -22,7 +23,8 @@ class TodosAdapter(private val todos: Array<Todo>) :
         view.setOnClickListener { v: View? ->
             run {
                 val textView = v?.findViewById(R.id.todo) as TextView
-                Toast.makeText(parent.context, textView.text, Toast.LENGTH_LONG).show()
+                todoClickCallback.onClick(textView.text.toString())
+                //Toast.makeText(parent.context, textView.text, Toast.LENGTH_LONG).show()
             }
         }
         return ViewHolder(view)
